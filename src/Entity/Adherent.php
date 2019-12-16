@@ -19,6 +19,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class Adherent implements UserInterface
 {
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+    const ROLE_MANAGER = 'ROLE_MANAGER';
+    const ROLE_ADHERENT = 'ROLE_ADHERENT';
+    const DEFAULT_ROLE = 'ROLE_ADHERENT';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -62,6 +67,11 @@ class Adherent implements UserInterface
     private $password;
 
     /**
+     * @ORM\Column(type="array", length=255, nullable=true)
+     */
+    private $roles;
+
+    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Pret", mappedBy="adherent")
      */
     private $prets;
@@ -69,6 +79,8 @@ class Adherent implements UserInterface
     public function __construct()
     {
         $this->prets = new ArrayCollection();
+        $leRole[] = [self::DEFAULT_ROLE];
+        $this->roles = $leRole;
     }
 
     public function getId(): ?int
@@ -192,9 +204,24 @@ class Adherent implements UserInterface
     }
 
 
-    public function getRoles()
+    /**
+     * Affecte les roles de l'utilisateur
+     *
+     * @param array $roles
+     * @return $this
+     */
+    public function setRoles(array $roles)
     {
-        return ['ROLE_USER'];
+            $this->roles = $roles;
+            return $this;
+    }
+
+    /**
+     * @return array (Role|string)[] the user roles
+     */
+    public function getRoles():array
+    {
+        return $this->roles;
     }
 
 
