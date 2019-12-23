@@ -12,7 +12,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AdherentRepository")
- * @ApiResource()
+ * @ApiResource(
+ *      itemOperations={
+                "get"={
+ *              "method"="GET",
+ *              "route_name"="adherent_prets_count"
+ *     }
+ *   }
+ * )
  * @UniqueEntity(
  *     fields={"mail"},
  *     message="il esxiste déja un utilisateur avec ce mail"
