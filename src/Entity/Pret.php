@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PretRepository")
@@ -14,9 +15,25 @@ use Doctrine\ORM\Mapping as ORM;
  *              "path"="/prets/{id}",
  *              "access_control"="(is_granted('ROLE_ADHERENT') and object.getAdherent() == user) or is_granted('ROLE_MANAGER')",
  *              "access_control_message" = "Vous ne pouvez avoir accés que a vos prets."
- *     }
+ *     },
+ *     "put"={
+                "method"="PUT",
+ *              "path"="/prets/{id}",
+ *              "access_control"="is_granted('ROLE_MANAGER')",
+ *              "access_control_message"="Vous n'avez pas les droitscd'accéder a cette ressource",
+ *              "denormalization_context"={
+ *                  "groups"={"put_manager"}
+ *                }
+ *           },
+ *           "delete"={
+                "method"="DELETE",
+ *              "path"="/prets/{id}",
+ *              "access_control"="is_granted('ROLE_MANAGER')",
+ *              "access_control_message"="Vous n'avez pas les droitscd'accéder a cette ressource"
+ *           }
  * }
  * )
+ * @ORM\HasLifecycleCallbacks()
  */
 class Pret
 {
@@ -39,6 +56,7 @@ class Pret
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"put_manager"})
      */
     private $dateRetourReelle;
 
@@ -127,4 +145,12 @@ class Pret
 
         return $this;
     }
+
+    /**
+     * @ORM\PrePersist
+     *
+    public function rendIndispoLivre(){
+        $this->getLivre()->setDispo(false);
+    }
+    */
 }
